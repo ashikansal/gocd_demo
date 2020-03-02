@@ -3,7 +3,7 @@ pipelines:
     group: infra
     materials:
       mygit: #name of material
-        git: https://
+        git: https://github.com/ashikansal/gocd_demo.git
     stages:
       - validate: # name of stage
           jobs:
@@ -46,7 +46,7 @@ pipelines:
     group: infra
     materials:
       mygit: #name of material
-        git: https://
+        git: https://github.com/ashikansal/gocd_demo.git
       upstream:
         pipeline: demo_infra_int
         stage: apply
@@ -83,7 +83,7 @@ pipelines:
     group: infra
     materials:
       mygit: #name of material
-        git: https://
+        git: https://github.com/ashikansal/gocd_demo.git
       upstream:
         pipeline: demo_infra_qa
         stage: test

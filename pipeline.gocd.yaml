@@ -1,0 +1,118 @@
+pipelines:
+  demo_infra_int:
+    group: infra
+    materials:
+      mygit: #name of material
+        git: https://
+    stages:
+      - validate: # name of stage
+          jobs:
+            validate_tf:
+              tasks:
+                - exec:
+                    command: bash
+                    arguments:
+                      - -c
+                      - terraform version && echo "terraform validate"
+      - plan: # name of stage
+          jobs:
+            plan_tf:
+              tasks:
+                - exec:
+                    command: bash
+                    arguments:
+                      - -c
+                      - echo "terraform plan"
+      - test: # name of stage
+          jobs:
+            test_tf:
+              tasks:
+                - exec:
+                    command: bash
+                    arguments:
+                      - -c
+                      - echo "terraform test via terratest"
+      - apply: # name of stage
+          jobs:
+            apply_tf:
+              tasks:
+                - exec:
+                    command: bash
+                    arguments:
+                      - -c
+                      - echo "terraform apply"
+
+  demo_infra_qa:
+    group: infra
+    materials:
+      mygit: #name of material
+        git: https://
+      upstream:
+        pipeline: demo_infra_int
+        stage: apply
+    stages:
+      - plan: # name of stage
+          jobs:
+            plan_tf:
+              tasks:
+                - exec:
+                    command: bash
+                    arguments:
+                      - -c
+                      - echo "terraform plan"
+      - apply: # name of stage
+          jobs:
+            apply_tf:
+              tasks:
+                - exec:
+                    command: bash
+                    arguments:
+                      - -c
+                      - echo "terraform apply"
+      - test: # name of stage
+          jobs:
+            integration_test_tf:
+              tasks:
+                - exec:
+                    command: bash
+                    arguments:
+                      - -c
+                      - echo "terraform integration test via rspec"
+
+  demo_infra_prod:
+    group: infra
+    materials:
+      mygit: #name of material
+        git: https://
+      upstream:
+        pipeline: demo_infra_qa
+        stage: test
+    stages:
+      - plan: # name of stage
+          jobs:
+            plan_tf:
+              tasks:
+                - exec:
+                    command: bash
+                    arguments:
+                      - -c
+                      - echo "terraform plan"
+      - apply: # name of stage
+          approval: manual
+          jobs:
+            apply_tf:
+              tasks:
+                - exec:
+                    command: bash
+                    arguments:
+                      - -c
+                      - echo "terraform apply"
+      - healthcheck: # name of stage
+          jobs:
+            healthcheck_tf:
+              tasks:
+                - exec:
+                    command: bash
+                    arguments:
+                      - -c
+                      - echo "terraform healthcheck"

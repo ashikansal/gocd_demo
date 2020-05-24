@@ -1,11 +1,11 @@
 pipelines:
-  demo_infra_int:
-    group: infra
+  demo_app_int:
+    group: demo_app
     materials:
       mygit: #name of material
         git: https://github.com/ashikansal/gocd_demo.git
     stages:
-      - build: # name of stage
+      - build_app: # name of stage
           jobs:
             validate_tf:
               tasks:
@@ -14,7 +14,7 @@ pipelines:
                     arguments:
                       - -c
                       - docker run hello-world
-      - test: # name of stage
+      - unit_test: # name of stage
           jobs:
             plan_tf:
               tasks:
@@ -23,7 +23,7 @@ pipelines:
                     arguments:
                       - -c
                       - echo "terraform plan"
-      - push: # name of stage
+      - push_image: # name of stage
           jobs:
             test_tf:
               tasks:
@@ -32,7 +32,7 @@ pipelines:
                     arguments:
                       - -c
                       - echo "terraform test via terratest"
-      - deploy: # name of stage
+      - deploy_app: # name of stage
           jobs:
             apply_tf:
               tasks:
@@ -42,16 +42,16 @@ pipelines:
                       - -c
                       - echo "terraform apply"
 
-  demo_infra_qa:
-    group: infra
+  demo_app_qa:
+    group: demo_app
     materials:
       mygit: #name of material
         git: https://github.com/ashikansal/gocd_demo.git
       upstream:
-        pipeline: demo_infra_int
-        stage: apply
+        pipeline: demo_app_int
+        stage: deploy_app
     stages:
-      - plan: # name of stage
+      - pull_image: # name of stage
           jobs:
             plan_tf:
               tasks:
@@ -60,7 +60,7 @@ pipelines:
                     arguments:
                       - -c
                       - echo "terraform plan"
-      - apply: # name of stage
+      - deploy_app: # name of stage
           jobs:
             apply_tf:
               tasks:
@@ -69,7 +69,7 @@ pipelines:
                     arguments:
                       - -c
                       - echo "terraform apply"
-      - test: # name of stage
+      - api_test: # name of stage
           jobs:
             integration_test_tf:
               tasks:
@@ -79,16 +79,16 @@ pipelines:
                       - -c
                       - echo "terraform integration test via rspec"
 
-  demo_infra_prod:
-    group: infra
+  demo_app_prod:
+    group: demo_app
     materials:
       mygit: #name of material
         git: https://github.com/ashikansal/gocd_demo.git
       upstream:
-        pipeline: demo_infra_qa
-        stage: test
+        pipeline: demo_app_qa
+        stage: api_test
     stages:
-      - plan: # name of stage
+      - pull_image: # name of stage
           jobs:
             plan_tf:
               tasks:
@@ -97,7 +97,7 @@ pipelines:
                     arguments:
                       - -c
                       - echo "terraform plan"
-      - apply: # name of stage
+      - deploy_app: # name of stage
           approval: manual
           jobs:
             apply_tf:

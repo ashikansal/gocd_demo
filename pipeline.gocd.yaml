@@ -5,7 +5,7 @@ pipelines:
       mygit: #name of material
         git: https://github.com/ashikansal/gocd_demo.git
     stages:
-      - validate: # name of stage
+      - build: # name of stage
           jobs:
             validate_tf:
               tasks:
@@ -13,8 +13,8 @@ pipelines:
                     command: bash
                     arguments:
                       - -c
-                      - terraform version && echo "terraform validate"
-      - plan: # name of stage
+                      - docker run hello-world
+      - test: # name of stage
           jobs:
             plan_tf:
               tasks:
@@ -23,7 +23,7 @@ pipelines:
                     arguments:
                       - -c
                       - echo "terraform plan"
-      - test: # name of stage
+      - push: # name of stage
           jobs:
             test_tf:
               tasks:
@@ -32,7 +32,7 @@ pipelines:
                     arguments:
                       - -c
                       - echo "terraform test via terratest"
-      - apply: # name of stage
+      - deploy: # name of stage
           jobs:
             apply_tf:
               tasks:

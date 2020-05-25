@@ -33,23 +33,23 @@ pipelines:
       - push_image: # name of stage
           clean_workspace: false
           jobs:
-            test_tf:
+            push_image:
               tasks:
                 - exec:
                     command: bash
                     arguments:
                       - -c
-                      - echo "terraform test via terratest"
+                      - echo "push to remote docker hub"
       - deploy_app: # name of stage
           clean_workspace: false
           jobs:
-            apply_tf:
+            deploy_app:
               tasks:
                 - exec:
                     command: bash
                     arguments:
                       - -c
-                      - docker run -p 8080:8080 -d java_app
+                      - docker run --rm -p 81:8080 -d gocd_demo_app
 
   demo_app_qa:
     group: demo_app
@@ -62,31 +62,31 @@ pipelines:
     stages:
       - pull_image: # name of stage
           jobs:
-            plan_tf:
+            pull_image:
               tasks:
                 - exec:
                     command: bash
                     arguments:
                       - -c
-                      - echo "terraform plan"
+                      - echo "pull docker image"
       - deploy_app: # name of stage
           jobs:
-            apply_tf:
+            deploy_app:
               tasks:
                 - exec:
                     command: bash
                     arguments:
                       - -c
-                      - echo "terraform apply"
+                      - docker run --rm -p 82:8080 -d gocd_demo_app
       - api_test: # name of stage
           jobs:
-            integration_test_tf:
+            api_test:
               tasks:
                 - exec:
                     command: bash
                     arguments:
                       - -c
-                      - echo "terraform integration test via rspec"
+                      - echo "run api test"
 
   demo_app_prod:
     group: demo_app
@@ -99,29 +99,29 @@ pipelines:
     stages:
       - pull_image: # name of stage
           jobs:
-            plan_tf:
+            pull_image:
               tasks:
                 - exec:
                     command: bash
                     arguments:
                       - -c
-                      - echo "terraform plan"
+                      - echo "pull docker image"
       - deploy_app: # name of stage
           approval: manual
           jobs:
-            apply_tf:
+            deploy_app:
               tasks:
                 - exec:
                     command: bash
                     arguments:
                       - -c
-                      - echo "terraform apply"
+                      - docker run --rm -p 83:8080 -d gocd_demo_app
       - healthcheck: # name of stage
           jobs:
-            healthcheck_tf:
+            healthcheck:
               tasks:
                 - exec:
                     command: bash
                     arguments:
                       - -c
-                      - echo "terraform healthcheck"
+                      - echo "healthcheck"

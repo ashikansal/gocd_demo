@@ -22,7 +22,7 @@ pipelines:
                     command: bash
                     arguments:
                       - -c
-                      - docker run --rm --name maven-test -v "$HOME/.m2":/root/.m2 -v "$(pwd)":/usr/src/mymaven -w /usr/src/mymaven maven:3.6-jdk-8-slim mvn clean compile package
+                      - docker run --rm --name maven-test -v "$HOME/.m2":/root/.m2 -v "$(pwd)":/usr/src/mymaven -w /usr/src/mymaven maven:3.6-jdk-8-slim mvn clean compile package -DskipTests
 
       - build_image: # name of stage
           jobs:

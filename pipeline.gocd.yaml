@@ -13,7 +13,7 @@ pipelines:
                     command: bash
                     arguments:
                       - -c
-                      - echo $(pwd) && docker run --rm --name maven-test -v "$HOME/.m2":/root/.m2 -v /godata/pipelines/demo_app_int:/usr/src/mymaven -w /usr/src/mymaven maven:3.6-jdk-8-slim ls -lah
+                      - docker run --rm --name maven-test -v "$HOME/.m2":/root/.m2 -v "$(pwd)":/usr/src/mymaven -w /usr/src/mymaven maven:3.6-jdk-8-slim mvn clean test
       - build_jar: # name of stage
           jobs:
             build_jar:
@@ -32,7 +32,7 @@ pipelines:
                     command: bash
                     arguments:
                       - -c
-                      - echo "terraform test via terratest"
+                      - docker build -t java_app .
       - push_image: # name of stage
           jobs:
             test_tf:
@@ -50,7 +50,7 @@ pipelines:
                     command: bash
                     arguments:
                       - -c
-                      - echo "terraform apply"
+                      - docker run -p 8080:8080 -d java_app
 
   demo_app_qa:
     group: demo_app

@@ -24,8 +24,12 @@ pipelines:
                     command: bash
                     arguments:
                       - -c
-                      - docker run --rm --name maven-test -v "$HOME/.m2":/root/.m2 -v "$(pwd)":/usr/src/mymaven -w /usr/src/mymaven maven:3.6-jdk-8-slim mvn clean compile package -DskipTests && docker build -t gocd_demo_app --build-arg JAR_FILE=$(pwd)/target/spring-boot-angular-1.0.jar .
-
+                      - docker run --rm --name maven-test -v "$HOME/.m2":/root/.m2 -v "$(pwd)":/usr/src/mymaven -w /usr/src/mymaven maven:3.6-jdk-8-slim mvn clean compile package -DskipTests
+                - exec:
+                    command: bash
+                    arguments:
+                      - -c
+                      - docker build -t gocd_demo_app .
       - push_image: # name of stage
           clean_workspace: false
           jobs:

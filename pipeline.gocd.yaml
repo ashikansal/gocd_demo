@@ -13,7 +13,7 @@ pipelines:
                     command: bash
                     arguments:
                       - -c
-                      - echo $(pwd) && docker run --rm --name maven-test -v "$HOME/.m2":/root/.m2 -v "$(pwd)":/usr/src/mymaven -w /usr/src/mymaven maven:3.6-jdk-8-slim mvn clean test
+                      - echo $(pwd) && docker run --rm --name maven-test -v "$HOME/.m2":/root/.m2 -v /godata/pipelines/demo_app_int:/usr/src/mymaven -w /usr/src/mymaven maven:3.6-jdk-8-slim ls -lah
       - build_jar: # name of stage
           jobs:
             build_jar:

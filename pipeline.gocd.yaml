@@ -16,6 +16,7 @@ pipelines:
                       - docker run --rm --name maven-test -v "$HOME/.m2":/root/.m2 -v "$(pwd)":/usr/src/mymaven -w /usr/src/mymaven maven:3.6-jdk-8-slim mvn clean test
       - build_jar: # name of stage
           clean_workspace: false
+          keep_artifacts: true
           jobs:
             build_jar:
               tasks:
@@ -27,6 +28,7 @@ pipelines:
 
       - build_image: # name of stage
           clean_workspace: false
+          keep_artifacts: true
           jobs:
             test_tf:
               tasks:
@@ -34,7 +36,7 @@ pipelines:
                     command: bash
                     arguments:
                       - -c
-                      - docker build -t java_app --build-args JAR_FILE=$(pwd)/target/spring-boot-angular-1.0.jar .
+                      - docker build -t java_app --build-arg JAR_FILE=$(pwd)/target/spring-boot-angular-1.0.jar .
       - push_image: # name of stage
           clean_workspace: false
           jobs:

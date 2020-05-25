@@ -30,13 +30,13 @@ pipelines:
           clean_workspace: false
           keep_artifacts: true
           jobs:
-            test_tf:
+            build_image:
               tasks:
                 - exec:
                     command: bash
                     arguments:
                       - -c
-                      - docker build -t java_app --build-arg JAR_FILE=$(pwd)/target/spring-boot-angular-1.0.jar .
+                      - echo $(pwd) && docker build -t java_app --build-arg JAR_FILE=$(pwd)/target/spring-boot-angular-1.0.jar .
       - push_image: # name of stage
           clean_workspace: false
           jobs:

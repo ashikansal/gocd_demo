@@ -36,7 +36,7 @@ pipelines:
                     command: bash
                     arguments:
                       - -c
-                      - echo $(pwd) && docker build -t java_app --build-arg JAR_FILE=$(pwd)/target/spring-boot-angular-1.0.jar .
+                      - echo $(pwd)
       - push_image: # name of stage
           clean_workspace: false
           jobs:

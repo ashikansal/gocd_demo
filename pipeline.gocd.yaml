@@ -33,11 +33,19 @@ pipelines:
                     arguments:
                       - -c
                       - docker run --rm --name maven-test -v "$HOME/.m2":/root/.m2 -v "$(pwd)":/usr/src/mymaven -w /usr/src/mymaven maven:3.6-jdk-8-slim mvn site -DgenerateReports=false
-      - build_jar_and_image: # name of stage
+      - build_and_push_image: # name of stage
           clean_workspace: false
           keep_artifacts: true
           jobs:
-            build_jar_and_image:
+            build_and_push_image:
+              artifacts:
+                - external:
+                    id: gocd_demo
+                    store_id: dockerhub
+                    configuration:
+                      options:
+                        Image: ${DOCKERHUB_USERNAME}/gocd_demo_app
+                        Tag: ${GO_PIPELINE_LABEL}
               tasks:
                 - exec:
                     command: bash
@@ -48,17 +56,7 @@ pipelines:
                     command: bash
                     arguments:
                       - -c
-                      - docker build -t gocd_demo_app .
-      - push_image: # name of stage
-          clean_workspace: false
-          jobs:
-            push_image:
-              tasks:
-                - exec:
-                    command: bash
-                    arguments:
-                      - -c
-                      - echo "push to remote docker hub"
+                      - docker build -t $DOCKERHUB_USERNAME/gocd_demo_app:$GO_PIPELINE_LABEL .
       - deploy_app: # name of stage
           clean_workspace: false
           jobs:
@@ -94,24 +92,10 @@ pipelines:
     environment_variables:
       image_version: latest
     stages:
-      - pull_image: # name of stage
-          jobs:
-            pull_image:
-              tasks:
-                - exec:
-                    command: bash
-                    arguments:
-                      - -c
-                      - echo "pull docker image"
-      - deploy_app: # name of stage
+      - pull_and_deploy_app: # name of stage
           jobs:
             deploy_app:
-              tasks:
-                - exec:
-                    command: bash
-                    arguments:
-                      - -c
-                      - echo "docker pull gocd_demo_app:$image_version"  
+              tasks: 
                 - exec:
                     command: bash
                     arguments:

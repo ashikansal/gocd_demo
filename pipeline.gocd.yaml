@@ -142,10 +142,10 @@ pipelines:
     materials:
       mygit: #name of material
         git: https://github.com/ashikansal/gocd_demo.git
-      upstream:
+      qa_upstream:
         pipeline: demo_app_qa
         stage: api_test
-      upstream:
+      int_upstream:
         pipeline: demo_app_int
         stage: build_and_push_image
     environment_variables:

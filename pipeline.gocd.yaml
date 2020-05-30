@@ -8,12 +8,28 @@ pipelines:
       - unit_test: # name of stage
           jobs:
             unit_test:
+              artifacts:
+                - test:
+                    source: target/site/*
+                    destination: test_reports/
+              tabs:
+                unit_test_report: test_reports/surefire-report.html
               tasks:
                 - exec:
                     command: bash
                     arguments:
                       - -c
                       - docker run --rm --name maven-test -v "$HOME/.m2":/root/.m2 -v "$(pwd)":/usr/src/mymaven -w /usr/src/mymaven maven:3.6-jdk-8-slim mvn clean test
+                - exec:
+                    command: bash
+                    arguments:
+                      - -c
+                      - docker run --rm --name maven-test -v "$HOME/.m2":/root/.m2 -v "$(pwd)":/usr/src/mymaven -w /usr/src/mymaven maven:3.6-jdk-8-slim mvn surefire-report:report-only
+                - exec:
+                    command: bash
+                    arguments:
+                      - -c
+                      - docker run --rm --name maven-test -v "$HOME/.m2":/root/.m2 -v "$(pwd)":/usr/src/mymaven -w /usr/src/mymaven maven:3.6-jdk-8-slim mvn site -DgenerateReports=false
       - build_jar_and_image: # name of stage
           clean_workspace: false
           keep_artifacts: true

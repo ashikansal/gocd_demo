@@ -13,7 +13,7 @@ pipelines:
                     source: target/site/*
                     destination: test_reports/
               tabs:
-                unit_test_report: test_reports/surefire-report.html
+                UT_report: test_reports/surefire-report.html
               tasks:
                 - exec:
                     command: bash

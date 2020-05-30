@@ -16,9 +16,9 @@ Follow the instructions [here](https://docs.gocd.org/current/configuration/manag
 
 ## **Steps to build CICD pipeline for your project**
 1. Commit your code in Github code repository.
-2. Register your repo in GOCD
-Go to Admin tab, open "Config XML"
-Add below lines in file:
+2. Register your repo in GOCD.
+> Go to Admin tab, open "Config XML"
+> Add below lines in file:
 ```
   <config-repos>
     <config-repo id="gocd_demo" pluginId="yaml.config.plugin">

@@ -37,7 +37,6 @@ Follow the instructions [here](https://docs.gocd.org/current/configuration/manag
 ## **Settings to be modified**
 Change below environment variables in pipeline.gocd.yaml file:
 ```
-DOCKERHUB_USERNAME: <username>
-id: <replace with your artifact id>
-store_id: <replace with your artifact id>
+DOCKERHUB_USERNAME: <replace with your docker hub username>
+ARTIFACT_STORE_ID: <replace with your artifact_store_id>
 ```

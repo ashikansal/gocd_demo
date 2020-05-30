@@ -41,7 +41,7 @@ pipelines:
               artifacts:
                 - external:
                     id: gocd_demo
-                    store_id: dockerhub
+                    store_id: gocd_demo
                     configuration:
                       options:
                         Image: ${DOCKERHUB_USERNAME}/gocd_demo_app
@@ -100,6 +100,11 @@ pipelines:
                     command: bash
                     arguments:
                       - -c
+                      - echo "docker pull gocd_demo_app:$image_version"    
+                - exec:
+                    command: bash
+                    arguments:
+                      - -c
                       - ./deploy_app.sh gocd_demo_app_qa 82 gocd_demo_app $image_version
       - api_test: # name of stage
           jobs:
@@ -131,16 +136,7 @@ pipelines:
     environment_variables:
       image_version: latest
     stages:
-      - pull_image: # name of stage
-          jobs:
-            pull_image:
-              tasks:
-                - exec:
-                    command: bash
-                    arguments:
-                      - -c
-                      - echo "pull docker image"
-      - deploy_app: # name of stage
+      - pull_and_deploy_app: # name of stage
           approval: manual
           jobs:
             deploy_app:

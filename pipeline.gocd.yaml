@@ -82,7 +82,7 @@ pipelines:
                     command: bash
                     arguments:
                       - -c
-                      - curl http://localhost:81/api/products
+                      - curl -f http://localhost:81/api/products
   demo_app_qa:
     group: demo_app
     materials:
@@ -134,7 +134,7 @@ pipelines:
                     command: bash
                     arguments:
                       - -c
-                      - curl http://localhost:82/
+                      - curl -f http://localhost:82/
 
   demo_app_prod:
     group: demo_app
@@ -179,4 +179,4 @@ pipelines:
                     command: bash
                     arguments:
                       - -c
-                      - curl http://localhost:83/api/products
+                      - curl -f http://localhost:83/api/products

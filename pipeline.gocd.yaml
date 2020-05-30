@@ -4,6 +4,8 @@ pipelines:
     materials:
       mygit: #name of material
         git: https://github.com/ashikansal/gocd_demo.git
+    environment_variables:
+      image_version: latest
     stages:
       - unit_test: # name of stage
           jobs:
@@ -61,8 +63,6 @@ pipelines:
           clean_workspace: false
           jobs:
             deploy_app:
-              environment_variables:
-                image_version: latest
               tasks:
                 - exec:
                     command: bash
@@ -82,6 +82,8 @@ pipelines:
       upstream:
         pipeline: demo_app_int
         stage: deploy_app
+    environment_variables:
+      image_version: latest
     stages:
       - pull_image: # name of stage
           jobs:
@@ -95,8 +97,6 @@ pipelines:
       - deploy_app: # name of stage
           jobs:
             deploy_app:
-              environment_variables:
-                image_version: latest
               tasks:
                 - exec:
                     command: bash
@@ -126,6 +126,8 @@ pipelines:
       upstream:
         pipeline: demo_app_qa
         stage: api_test
+    environment_variables:
+      image_version: latest
     stages:
       - pull_image: # name of stage
           jobs:
@@ -140,8 +142,6 @@ pipelines:
           approval: manual
           jobs:
             deploy_app:
-              environment_variables:
-                image_version: latest
               tasks:
                 - exec:
                     command: bash

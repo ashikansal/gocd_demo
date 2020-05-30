@@ -74,6 +74,15 @@ pipelines:
                     arguments:
                       - -c
                       - ./deploy_app.sh gocd_demo_app_int 81 gocd_demo_app $image_version
+      - health_check: # name of stage
+          jobs:
+            healthcheck:
+              tasks:
+                - exec:
+                    command: bash
+                    arguments:
+                      - -c
+                      - curl http://localhost:81/api/products
   demo_app_qa:
     group: demo_app
     materials:
@@ -117,6 +126,15 @@ pipelines:
                     arguments:
                       - -c
                       - echo "run api test"
+      - health_check: # name of stage
+          jobs:
+            healthcheck:
+              tasks:
+                - exec:
+                    command: bash
+                    arguments:
+                      - -c
+                      - curl http://localhost:82/
 
   demo_app_prod:
     group: demo_app
@@ -153,7 +171,7 @@ pipelines:
                     arguments:
                       - -c
                       - ./deploy_app.sh gocd_demo_app_prod 83 gocd_demo_app $image_version
-      - healthcheck: # name of stage
+      - health_check: # name of stage
           jobs:
             healthcheck:
               tasks:
@@ -161,4 +179,4 @@ pipelines:
                     command: bash
                     arguments:
                       - -c
-                      - echo "healthcheck"
+                      - curl http://localhost:83/api/products

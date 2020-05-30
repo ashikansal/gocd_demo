@@ -98,7 +98,7 @@ pipelines:
       IMAGE_VERSION: latest
       DOCKERHUB_USERNAME: ashikansal #replace it by your own username
     stages:
-      - pull_and_deploy_app: # name of stage
+      - deploy_app: # name of stage
           jobs:
             deploy_app:
               tasks: 
@@ -153,7 +153,7 @@ pipelines:
       IMAGE_VERSION: latest
       DOCKERHUB_USERNAME: ashikansal #replace it by your own username
     stages:
-      - pull_and_deploy_app: # name of stage
+      - deploy_app: # name of stage
           approval: manual
           jobs:
             deploy_app:

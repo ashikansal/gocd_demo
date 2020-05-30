@@ -8,6 +8,3 @@ echo $container_id
 if [ -n $container_id ] ; then
 	docker rm $name -f
 fi
-
-# docker pull $image:$version
-docker run --rm -p $port:8080 --name $name -d $image:$version

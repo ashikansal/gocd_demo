@@ -61,18 +61,19 @@ pipelines:
           clean_workspace: false
           jobs:
             deploy_app:
+              environment_variables:
+                image_version: latest
               tasks:
                 - exec:
                     command: bash
                     arguments:
                       - -c
-                      - docker rmi gocd_demo_app_int
+                      - echo "docker pull gocd_demo_app:$image_version"               
                 - exec:
                     command: bash
                     arguments:
                       - -c
-                      - docker run --rm -p 81:8080 --name gocd_demo_app_int -d gocd_demo_app
-
+                      - ./deploy_app.sh gocd_demo_app_int 81 gocd_demo_app $image_version
   demo_app_qa:
     group: demo_app
     materials:
@@ -94,17 +95,19 @@ pipelines:
       - deploy_app: # name of stage
           jobs:
             deploy_app:
+              environment_variables:
+                image_version: latest
               tasks:
                 - exec:
                     command: bash
                     arguments:
                       - -c
-                      - docker rmi gocd_demo_app_qa
+                      - echo "docker pull gocd_demo_app:$image_version"  
                 - exec:
                     command: bash
                     arguments:
                       - -c
-                      - docker run --rm -p 82:8080 --name gocd_demo_app_qa -d gocd_demo_app
+                      - ./deploy_app.sh gocd_demo_app_qa 82 gocd_demo_app $image_version
       - api_test: # name of stage
           jobs:
             api_test:
@@ -137,17 +140,19 @@ pipelines:
           approval: manual
           jobs:
             deploy_app:
+              environment_variables:
+                image_version: latest
               tasks:
                 - exec:
                     command: bash
                     arguments:
                       - -c
-                      - docker rmi gocd_demo_app_prod
+                      - echo "docker pull gocd_demo_app:$image_version"                
                 - exec:
                     command: bash
                     arguments:
                       - -c
-                      - docker run --rm -p 83:8080 --name gocd_demo_app_prod -d gocd_demo_app
+                      - ./deploy_app.sh gocd_demo_app_prod 83 gocd_demo_app $image_version
       - healthcheck: # name of stage
           jobs:
             healthcheck:

@@ -9,7 +9,7 @@ pipelines:
           jobs:
             unit_test:
               artifacts:
-                - test:
+                - build:
                     source: target/site/*
                     destination: test_reports/
               tabs:
@@ -66,7 +66,12 @@ pipelines:
                     command: bash
                     arguments:
                       - -c
-                      - docker run --rm -p 81:8080 -d gocd_demo_app
+                      - docker rmi gocd_demo_app_int
+                - exec:
+                    command: bash
+                    arguments:
+                      - -c
+                      - docker run --rm -p 81:8080 --name gocd_demo_app_int -d gocd_demo_app
 
   demo_app_qa:
     group: demo_app
@@ -94,7 +99,12 @@ pipelines:
                     command: bash
                     arguments:
                       - -c
-                      - docker run --rm -p 82:8080 -d gocd_demo_app
+                      - docker rmi gocd_demo_app_qa
+                - exec:
+                    command: bash
+                    arguments:
+                      - -c
+                      - docker run --rm -p 82:8080 --name gocd_demo_app_qa -d gocd_demo_app
       - api_test: # name of stage
           jobs:
             api_test:
@@ -132,7 +142,12 @@ pipelines:
                     command: bash
                     arguments:
                       - -c
-                      - docker run --rm -p 83:8080 -d gocd_demo_app
+                      - docker rmi gocd_demo_app_prod
+                - exec:
+                    command: bash
+                    arguments:
+                      - -c
+                      - docker run --rm -p 83:8080 --name gocd_demo_app_prod -d gocd_demo_app
       - healthcheck: # name of stage
           jobs:
             healthcheck:

@@ -134,7 +134,7 @@ pipelines:
                     command: bash
                     arguments:
                       - -c
-                      - curl -f http://localhost:82/
+                      - curl -f http://localhost:82/api/products
 
   demo_app_prod:
     group: demo_app

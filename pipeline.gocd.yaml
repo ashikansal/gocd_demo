@@ -6,6 +6,7 @@ pipelines:
         git: https://github.com/ashikansal/gocd_demo.git
     environment_variables:
       image_version: latest
+      DOCKERHUB_USERNAME: ashikansal #replace it by your own username
     stages:
       - unit_test: # name of stage
           jobs:

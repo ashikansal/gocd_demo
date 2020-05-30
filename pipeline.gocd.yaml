@@ -5,7 +5,8 @@ pipelines:
       mygit: #name of material
         git: https://github.com/ashikansal/gocd_demo.git
     environment_variables:
-      image_version: latest
+      IMAGE_NAME: gocd_demo_app 
+      IMAGE_VERSION: latest
       DOCKERHUB_USERNAME: ashikansal #replace it by your own username
     stages:
       - unit_test: # name of stage
@@ -28,24 +29,19 @@ pipelines:
                     command: bash
                     arguments:
                       - -c
-                      - docker run --rm --name maven-test -v "$HOME/.m2":/root/.m2 -v "$(pwd)":/usr/src/mymaven -w /usr/src/mymaven maven:3.6-jdk-8-slim mvn surefire-report:report-only
-                - exec:
-                    command: bash
-                    arguments:
-                      - -c
-                      - docker run --rm --name maven-test -v "$HOME/.m2":/root/.m2 -v "$(pwd)":/usr/src/mymaven -w /usr/src/mymaven maven:3.6-jdk-8-slim mvn site -DgenerateReports=false
-      - build_and_push_image: # name of stage
+                      - docker run --rm --name maven-test -v "$HOME/.m2":/root/.m2 -v "$(pwd)":/usr/src/mymaven -w /usr/src/mymaven maven:3.6-jdk-8-slim mvn surefire-report:report-only && mvn site -DgenerateReports=false
+     - build_and_push_image: # name of stage
           clean_workspace: false
           keep_artifacts: true
           jobs:
             build_and_push_image:
               artifacts:
                 - external:
-                    id: gocd_demo
-                    store_id: gocd_demo
+                    id: gocd_demo #replace with your artifact id
+                    store_id: gocd_demo #replace with your artifact id
                     configuration:
                       options:
-                        Image: ${DOCKERHUB_USERNAME}/gocd_demo_app
+                        Image: ${DOCKERHUB_USERNAME}/${IMAGE_NAME}
                         Tag: ${GO_PIPELINE_LABEL}
               tasks:
                 - exec:
@@ -57,22 +53,29 @@ pipelines:
                     command: bash
                     arguments:
                       - -c
-                      - docker build -t $DOCKERHUB_USERNAME/gocd_demo_app:$GO_PIPELINE_LABEL .
+                      - docker build -t $DOCKERHUB_USERNAME/$IMAGE_NAME:$GO_PIPELINE_LABEL -t $DOCKERHUB_USERNAME/$IMAGE_NAME .
       - deploy_app: # name of stage
           clean_workspace: false
           jobs:
             deploy_app:
               tasks:
+                - fetch:
+                    artifact_origin: external
+                    pipeline: demo_app_int
+                    stage: build_and_push_image
+                    job: build_and_push_image
+                    artifact_id: gocd_demo
+                    run_if: passed
                 - exec:
                     command: bash
                     arguments:
                       - -c
-                      - echo "docker pull gocd_demo_app:$image_version"               
+                      - ./cleanup.sh gocd_demo_app_int            
                 - exec:
                     command: bash
                     arguments:
                       - -c
-                      - ./deploy_app.sh gocd_demo_app_int 81 gocd_demo_app $image_version
+                      - docker run --rm -p 81:8080 --name gocd_demo_app_int -d $DOCKERHUB_USERNAME/$IMAGE_NAME:$IMAGE_VERSION
       - health_check: # name of stage
           jobs:
             healthcheck:
@@ -91,22 +94,31 @@ pipelines:
         pipeline: demo_app_int
         stage: deploy_app
     environment_variables:
-      image_version: latest
+      IMAGE_NAME: gocd_demo_app 
+      IMAGE_VERSION: latest
+      DOCKERHUB_USERNAME: ashikansal #replace it by your own username
     stages:
       - pull_and_deploy_app: # name of stage
           jobs:
             deploy_app:
               tasks: 
+                - fetch:
+                    artifact_origin: external
+                    pipeline: demo_app_int
+                    stage: build_and_push_image
+                    job: build_and_push_image
+                    artifact_id: gocd_demo
+                    run_if: passed
                 - exec:
                     command: bash
                     arguments:
                       - -c
-                      - echo "docker pull gocd_demo_app:$image_version"    
+                      - ./cleanup.sh gocd_demo_app_qa
                 - exec:
                     command: bash
                     arguments:
                       - -c
-                      - ./deploy_app.sh gocd_demo_app_qa 82 gocd_demo_app $image_version
+                      - docker run --rm -p 82:8080 --name gocd_demo_app_qa -d $DOCKERHUB_USERNAME/$IMAGE_NAME:$IMAGE_VERSION
       - api_test: # name of stage
           jobs:
             api_test:
@@ -125,7 +137,6 @@ pipelines:
                     arguments:
                       - -c
                       - curl -f http://localhost:82/api/products
-
   demo_app_prod:
     group: demo_app
     materials:
@@ -134,24 +145,36 @@ pipelines:
       upstream:
         pipeline: demo_app_qa
         stage: api_test
+      upstream:
+        pipeline: demo_app_int
+        stage: build_and_push_image
     environment_variables:
-      image_version: latest
+      IMAGE_NAME: gocd_demo_app 
+      IMAGE_VERSION: latest
+      DOCKERHUB_USERNAME: ashikansal #replace it by your own username
     stages:
       - pull_and_deploy_app: # name of stage
           approval: manual
           jobs:
             deploy_app:
               tasks:
+                - fetch:
+                    artifact_origin: external
+                    pipeline: demo_app_int
+                    stage: build_and_push_image
+                    job: build_and_push_image
+                    artifact_id: gocd_demo
+                    run_if: passed
                 - exec:
                     command: bash
                     arguments:
                       - -c
-                      - echo "docker pull gocd_demo_app:$image_version"                
+                      - ./cleanup.sh gocd_demo_app_prod               
                 - exec:
                     command: bash
                     arguments:
                       - -c
-                      - ./deploy_app.sh gocd_demo_app_prod 83 gocd_demo_app $image_version
+                      - docker run --rm -p 83:8080 --name gocd_demo_app_prod -d $DOCKERHUB_USERNAME/$IMAGE_NAME:$IMAGE_VERSION
       - health_check: # name of stage
           jobs:
             healthcheck:

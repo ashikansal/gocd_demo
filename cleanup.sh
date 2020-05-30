@@ -1,10 +1,8 @@
 #!/bin/bash
 
-#check if container exist with given name , delete it
+#check if container exist with given name, delete it
 name=$1
-port=$2
-image=$3
-version=$4
+
 container_id=`docker ps -aqf name=$name`
 echo $container_id
 if [ -n $container_id ] ; then

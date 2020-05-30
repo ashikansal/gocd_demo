@@ -33,3 +33,10 @@ Follow the instructions [here](https://docs.gocd.org/current/configuration/manag
     </config-repo>
   </config-repos>
 ```
+
+## **Settings to be modified**
+> Change below environment variables in pipeline.gocd.yaml
+> line 9:   DOCKERHUB_USERNAME: <username>
+> line 44:  id: <replace with your artifact id>
+> line 45:  store_id: <replace with your artifact id>
+ 

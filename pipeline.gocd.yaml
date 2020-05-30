@@ -14,6 +14,7 @@ pipelines:
                     destination: test_reports/
               tabs:
                 UT_report: test_reports/surefire-report.html
+                UT_coverage: test_reports/jacoco/index.html
               tasks:
                 - exec:
                     command: bash

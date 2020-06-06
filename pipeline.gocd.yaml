@@ -144,7 +144,7 @@ pipelines:
         git: https://github.com/ashikansal/gocd_demo.git
       qa_upstream:
         pipeline: demo_app_qa
-        stage: api_test
+        stage: health_check
       # int_upstream:
       #   pipeline: demo_app_int
       #   stage: build_and_push_image
@@ -169,7 +169,7 @@ pipelines:
               tasks:
                 - fetch:
                     artifact_origin: external
-                    pipeline: demo_app_int
+                    pipeline: demo_app_qa/demo_app_int
                     stage: build_and_push_image
                     job: build_and_push_image
                     artifact_id: gocd_demo

@@ -2,7 +2,7 @@ pipelines:
   demo_app_int:
     group: demo_app
     materials:
-      mygit: #name of material
+      int_code_base: #name of material
         git: https://github.com/ashikansal/gocd_demo.git
     environment_variables:
       IMAGE_NAME: gocd_demo_app 
@@ -88,11 +88,11 @@ pipelines:
   demo_app_qa:
     group: demo_app
     materials:
-      mygit: #name of material
+      qa_code_base: #name of material
         git: https://github.com/ashikansal/gocd_demo.git
       upstream:
         pipeline: demo_app_int
-        stage: deploy_app
+        stage: health_check
     environment_variables:
       IMAGE_NAME: gocd_demo_app 
       IMAGE_VERSION: latest

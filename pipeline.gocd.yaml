@@ -90,7 +90,7 @@ pipelines:
     materials:
       qa_code_base: #name of material
         git: https://github.com/ashikansal/gocd_demo.git
-      upstream:
+      qa_upstream:
         pipeline: demo_app_int
         stage: health_check
     environment_variables:
@@ -140,7 +140,7 @@ pipelines:
   demo_app_prod:
     group: demo_app
     materials:
-      mygit: #name of material
+      prod_code_base: #name of material
         git: https://github.com/ashikansal/gocd_demo.git
       qa_upstream:
         pipeline: demo_app_qa

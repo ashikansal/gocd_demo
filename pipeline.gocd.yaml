@@ -145,14 +145,23 @@ pipelines:
       qa_upstream:
         pipeline: demo_app_qa
         stage: api_test
-      int_upstream:
-        pipeline: demo_app_int
-        stage: build_and_push_image
+      # int_upstream:
+      #   pipeline: demo_app_int
+      #   stage: build_and_push_image
     environment_variables:
       IMAGE_NAME: gocd_demo_app 
       IMAGE_VERSION: latest
       DOCKERHUB_USERNAME: ashikansal #replace it by your own username
     stages:
+      - waiting_zone: # name of stage
+          jobs:
+            waiting_zone:
+              tasks:
+                - exec:
+                    command: bash
+                    arguments:
+                      - -c
+                      - echo "waiting for prod deployment to trigger"              
       - deploy_app: # name of stage
           approval: manual
           jobs:
